@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -20,12 +22,17 @@ import org.w3c.dom.NodeList;
 
 import com.google.appengine.api.search.Document;
 import com.google.appengine.api.search.Field;
+import com.google.appengine.api.search.GetRequest;
+import com.google.appengine.api.search.GetResponse;
 import com.google.appengine.api.search.Index;
 import com.google.appengine.api.search.IndexSpec;
 import com.google.appengine.api.search.PutException;
+import com.google.appengine.api.search.Results;
+import com.google.appengine.api.search.ScoredDocument;
 import com.google.appengine.api.search.SearchServiceFactory;
 import com.google.appengine.api.search.StatusCode;
 import com.google.appengine.labs.repackaged.org.json.JSONArray;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
 /**
@@ -100,6 +107,7 @@ public class UCDMoodNoozServlet extends HttpServlet {
 			    	    .addField(Field.newBuilder().setName("link").setAtom(link))
 			    	    .addField(Field.newBuilder().setName("title").setAtom(title))
 			    	    .addField(Field.newBuilder().setName("date").setDate(date))
+			    	    .addField(Field.newBuilder().setName("source").setAtom(source))
 			    	    .addField(Field.newBuilder().setName("description").setAtom(description))
 			    	    .addField(Field.newBuilder().setName("body").setText(body))
 			    	    .build();
@@ -213,8 +221,10 @@ public class UCDMoodNoozServlet extends HttpServlet {
 					queryStringBuilder.append(") ");
 				}
 			}
-		// writer.write("built search string : " + queryStringBuilder.toString());
+			queryString = queryStringBuilder.toString();
+//			writer.write("built search string : " + queryString);
 			
+				
 //			SortOptions sortOptions = SortOptions.newBuilder()
 //					.addSortExpression(SortExpression.newBuilder()
 //									.setExpression(String.format(
@@ -228,42 +238,64 @@ public class UCDMoodNoozServlet extends HttpServlet {
 //					.setSortOptions(sortOptions).build();
 //			
 //			Query query = Query.newBuilder().setOptions(options).build(queryString);
-//			Results<ScoredDocument> results = getIndex().search(query);
-//			
-//			if (results != null) {
-//				for (ScoredDocument scoredDocument : results) {
-//					JSONObject doc = new JSONObject();
-//					try {
-//						doc.put("link", scoredDocument.getOnlyField("link").getAtom());
-//						doc.put("title", scoredDocument.getOnlyField("title").getAtom());
-//						doc.put("source", scoredDocument.getOnlyField("source").getAtom());
-//						doc.put("date", scoredDocument.getOnlyField("date").getDate().toString());
-//						doc.put("description", scoredDocument.getOnlyField("description").getAtom());
-//					} catch (JSONException e) {
-//						e.printStackTrace();
-//					}
-//				}
-//			}
-//			
-//			// server response:
-//			try {
-//				JSONObject wordsToHighlight = new JSONObject();
-//				wordsToHighlight.put("essential", essential);
-//				wordsToHighlight.put("positive", positive);
-//				wordsToHighlight.put("negative", negative);
-//				wordsToHighlight.put("both", both);
-//				object.put("words", wordsToHighlight);
-//				object.put("documents", documents);
-//				
-//				log.info("Returning json: " + object.toString());
-//
-//				resp.setCharacterEncoding("UTF-8");
-//				resp.setContentType("application/json");
-//				resp.getWriter().write(object.toString());
-//
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
+			
+			Results<ScoredDocument> results = getIndex().search(queryString);	
+			if (results != null) {
+				for (ScoredDocument scoredDocument : results) {
+					JSONObject doc = new JSONObject();
+					try {
+						doc.put("link", scoredDocument.getOnlyField("link").getAtom());
+						doc.put("title", scoredDocument.getOnlyField("title").getAtom());
+						doc.put("source", scoredDocument.getOnlyField("source").getAtom());
+						doc.put("date", scoredDocument.getOnlyField("date").getDate().toString());
+						doc.put("description", scoredDocument.getOnlyField("description").getAtom());
+						documents.put(doc);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			// server response:
+			try {
+				JSONObject wordsToHighlight = new JSONObject();
+				wordsToHighlight.put("essential", essential);
+				wordsToHighlight.put("positive", positive);
+				wordsToHighlight.put("negative", negative);
+				wordsToHighlight.put("both", both);
+				object.put("words", wordsToHighlight);
+				object.put("documents", documents);
+				
+				log.info("Returning json: " + object.toString());
+
+				resp.setCharacterEncoding("UTF-8");
+				resp.setContentType("application/json");
+				writer.write(object.toString());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+	}
+	
+	private void deleteAll() {
+		try {
+		    while (true) {
+		        List<String> docIds = new ArrayList<String>();
+		        // Return a set of document IDs.
+		        GetRequest request = GetRequest.newBuilder().setReturningIdsOnly(true).build();
+		        GetResponse<Document> response = getIndex().getRange(request);
+		        if (response.getResults().isEmpty()) {
+		            break;
+		        }
+		        for (Document doc : response) {
+		            docIds.add(doc.getId());
+		        }
+		        getIndex().delete(docIds);
+		    }
+		} catch (RuntimeException e) {
+		    
+		}
+
 	}
 }
