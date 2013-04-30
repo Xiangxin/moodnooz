@@ -143,7 +143,6 @@ public class MainActivity extends Activity {
     
     public class SendSearchStringToServerTask extends AsyncTask<Void, Void, JSONObject> {
     	
-    	
 		@Override
 		protected JSONObject doInBackground(Void... params) {
 			DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -166,11 +165,13 @@ public class MainActivity extends Activity {
 					return ((JSONObject) new JSONTokener(responseBody).nextValue());
 				}
 			} catch (Exception e) {
-				Log.e(TAG, "error at SendSearchStringToServerTask doInBackground()" + e.getLocalizedMessage());
+				Log.e(TAG, "error at SendSearchStringToServerTask doInBackground()"
+								+ e.getLocalizedMessage());
 			}
 			return null;
 		}
 		
+		@SuppressWarnings("unchecked")
 		@Override
 		protected void onPostExecute(JSONObject responseObject) {
 			if(responseObject == null) {
@@ -180,8 +181,16 @@ public class MainActivity extends Activity {
 			
 			try {
 				JSONObject words = responseObject.getJSONObject("words");
-				Log.i(TAG, "words: " + words.toString());
-				// Vector<String> essential = (Vector<String>) words.get("essential");
+				
+				JSONArray essential =  (JSONArray) words.get("essential");
+				JSONArray positive = (JSONArray) words.get("positive");
+				JSONArray negative = (JSONArray) words.get("negative");
+				JSONArray both = (JSONArray) words.get("both");
+				
+				Log.i(TAG, "essential: " + essential.toString());
+				Log.i(TAG, "positive: " + positive.toString());
+				Log.i(TAG, "negative: " + negative.toString());
+				Log.i(TAG, "both: " + both.toString());
 
 				JSONArray documents = responseObject.getJSONArray("documents");
 				for(int i = 0; i < documents.length(); i++) {
@@ -191,8 +200,9 @@ public class MainActivity extends Activity {
 									+ doc.getString("source") + " | "
 									+ doc.getString("description"));
 				}
-			} catch (JSONException e) {
-				Log.e(TAG, "error at SendSearchStringToServerTask onPostExecute()" + e.getLocalizedMessage());
+			} catch (Exception e) {
+				Log.e(TAG, "error at SendSearchStringToServerTask onPostExecute()"
+								+ e.getLocalizedMessage());
 			}
 		}
     }
