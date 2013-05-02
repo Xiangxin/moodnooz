@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
+    <color name="transparent">#00000000</color>
     <color name="search_page_top_bar">#DACFCD</color>
     <color name="btn_bg">#9155A7</color>
     <color name="btn_bg_selected">#783D8E</color>

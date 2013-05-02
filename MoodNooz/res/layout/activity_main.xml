@@ -29,7 +29,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
             android:background="@drawable/info_button"
-            android:onClick="info_button_Clicked" />
+            android:onClick="infoButtonClicked" />
     </RelativeLayout>
 
     <LinearLayout
