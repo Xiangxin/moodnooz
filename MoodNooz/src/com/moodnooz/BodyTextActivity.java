@@ -80,10 +80,12 @@ public class BodyTextActivity extends Activity {
         });
 	}
 	
-	class GetBodyTextAsyncTask extends AsyncTask<Void, Void, String>{
+	class GetBodyTextAsyncTask extends AsyncTask<Void, Void, Void>{
+		
+		String bodyText = null;
 
 		@Override
-		protected String doInBackground(Void... params) {
+		protected Void doInBackground(Void... params) {
 			
 			DefaultHttpClient httpclient = new DefaultHttpClient();
 			HttpPost httpost = new HttpPost(MoodNoozUtils.BASE_URL);
@@ -104,7 +106,7 @@ public class BodyTextActivity extends Activity {
 					String responseBody = MoodNoozUtils
 							.getStringResponseData(httpResponse);
 					// Log.i(TAG, "response body: \"" + responseBody + "\"");
-					return responseBody;
+					bodyText =  responseBody;
 				}
 			} catch (Exception e) {
 				Log.e(TAG, "error at BodyTextActivity doInBackground()"
@@ -114,9 +116,9 @@ public class BodyTextActivity extends Activity {
 		}
 		
 		@Override
-		protected void onPostExecute(String bodyText) {
+		protected void onPostExecute(Void v) {
 			
-			Log.i(TAG, "bodyText for link (" + link + "), source (" + simpSource + "): " + bodyText);
+			// Log.i(TAG, "bodyText for link (" + link + "), source (" + simpSource + "): " + bodyText);
 			SharedPreferences prefs = MoodNoozUtils.getSharedPreferences(getApplicationContext());
 			@SuppressWarnings("unchecked")
 			Map<String, String> pairs = (Map<String, String>) prefs.getAll();

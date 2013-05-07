@@ -227,7 +227,175 @@ public class SearchResultActivity extends Activity {
     
     private String getSanitizedQueryString(String searchString) {
     	String sanitizedString = new String(searchString);
-    	// Remove special characters?
+    	/*
+    	 * 
+    	 * import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+
+public class sanitise {
+	
+public static String splitter(String query) throws Exception{
+	
+	query = query.toLowerCase();
+	int count = 0;
+	char current;
+	String buffer = "", root = "";
+	while (count < query.length()) {
+		current = query.charAt(count);
+		
+			if (isAlphanumeric(current) || current == ' ') {
+				buffer = buffer + current;
+			} else if(current == '+' || current == '-' || current == '?') {
+				if(isAlphanumeric(query.charAt(count + 1)))
+					buffer = buffer + current;
+			}
+			
+		count++;
+	}
+	
+	System.out.println(buffer);
+
+	String[] tokens = buffer.split(" ");
+	for(String token : tokens) {
+
+		System.out.println(token.length());
+		if(token == null || token.length() == 0)
+			continue;
+		if(token.charAt(0) == '+' || token.charAt(0) == '-' || token.charAt(0) == '?') {
+			token = token.charAt(0) + getRootForm(token.substring(1));
+		} else {
+			token = getRootForm(token);
+		}
+	}
+	
+	System.out.println(buffer);
+	
+	Set<String> set = new HashSet<String>();
+	for(String token : tokens) {
+		set.add(token);
+	}
+	
+	String result = "";
+	Iterator<String> iter = set.iterator();
+	while(iter.hasNext()) {
+		result += iter.next() + " ";
+	}
+	
+	
+	System.out.println(buffer);
+	return result;
+}
+
+
+private static boolean isAlphanumeric(char c) {
+	return ('a' <= c && c <= 'z') || ('0' <= c && c <= '9');
+}
+
+public static String getRootForm(String w)throws Exception{
+		
+		boolean root = false;
+		while (root == false){
+		BufferedReader br = new BufferedReader(new FileReader("irregular.txt"));
+		String line, buff;
+		while ((line = br.readLine()) != null) {
+			 StringTokenizer t = new StringTokenizer(line, "  	\t", false);
+			 buff = t.nextToken();
+			 while (t.hasMoreTokens()){
+				 if(w.equals(t.nextToken())){
+					w = buff;
+					root = true;
+				 }
+			 }
+		}
+		br.close();
+		
+		if (w.length() > 3){
+			
+			while(root == false){
+				 String end = w.substring(w.length() - 3);
+				 String ed = w.substring(w.length() - 2);
+				 String s = w.substring(w.length() - 1);
+				 				   
+				  if (s.equals("s")){
+				   
+				   if(end.equals("ses") || end.equals("xes") || end.equals("zes") || end.equals("hes") || end.equals("ies")){
+				   
+					   if(end.equals("ses") || end.equals("xes") || end.equals("zes")){
+				        	w = w.substring(0, w.length() - 2);
+				        	root = true;
+				        	
+				         }
+					   else if(end.equals("hes") ){
+				        	 end = w.substring(w.length() - 4);
+				        	 if (end.equals("thes")){
+				 	        	w = w.substring(0, w.length() - 2);
+					        	root = true;
+				        	 }
+				         }
+					   else if (end.equals("ies")){
+				        	 w = w.substring(0, w.length() - 3) + "y";
+				        	 root = true;
+				         }
+				   				   
+				   }
+				   
+				   else{
+				   w = w.substring(0, w.length() - 1);
+		        	root = true;
+				  } 
+				   
+				  }
+				  				 
+	         else if(end.equals("ing")){
+	        	 w = w.substring(0, w.length() - 3);
+	        	 if(w.charAt(w.length()- 1) == w.charAt(w.length()- 2)){
+	        		 w = w.substring(0, w.length() - 1);
+	        	 }
+	        	 root = true;
+	         }
+	         else if (end.equals("ied")){
+	        	 w = w.substring(0, w.length() - 3) + "y";
+	        	 root = true;
+	         }
+	         else if (ed.equals("ed")){
+	        	 w = w.substring(0, w.length() - 2);
+	        	 if(w.charAt(w.length()- 1) == w.charAt(w.length()- 2)){
+	        		 w = w.substring(0, w.length() - 1);
+	        	 }
+	        	 root = true;	        	 
+	         }
+	         else{
+	        	 root = true;
+	         }
+			}
+			
+		}
+		else{
+			root = true;
+		}
+		}
+		w = w.toLowerCase();
+		return w;
+	}
+
+public static void main(String[] args) throws Exception {
+	
+	// LoDon + traffic \"\"$%££%^&&$£ hah
+	// London +tTraffic ??easy easy
+	// cats cat +cAt
+	
+	String lol = "drappery horsed +pixies";
+	lol = splitter(lol);
+		
+}
+}
+
+    	 */
     	return sanitizedString;
     }
 }
