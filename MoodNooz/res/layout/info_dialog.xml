@@ -7,7 +7,7 @@
 
     <com.moodnooz.ui.MoodNoozTextViewGosmick
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="45dp"
         android:background="@color/btn_bg"
         android:gravity="center"
         android:text="@string/tips"
@@ -23,23 +23,37 @@
 
         <com.moodnooz.ui.MoodNoozTextView
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
             android:gravity="center_vertical"
             android:text="@string/tip1"
-            android:textColor="@color/btn_bg" />
+            android:textColor="@color/btn_bg"
+            android:textSize="17sp" />
 
         <com.moodnooz.ui.MoodNoozTextView
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
             android:gravity="center_vertical"
             android:text="@string/tip2"
-            android:textColor="@color/btn_bg" />
+            android:textColor="@color/btn_bg"
+            android:textSize="17sp" />
+
+        <com.moodnooz.ui.MoodNoozTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center_vertical"
+            android:text="@string/tip3"
+            android:textColor="@color/btn_bg"
+            android:textSize="17sp" />
     </LinearLayout>
 
     <com.moodnooz.ui.MoodNoozTextViewGosmick
         android:id="@+id/got_it"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="47dp"
         android:background="@color/btn_bg"
         android:gravity="center"
         android:text="@string/got_it"

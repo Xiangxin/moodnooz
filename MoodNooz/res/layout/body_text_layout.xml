@@ -87,6 +87,16 @@
             android:text="@string/load_body_fail_msg"
             android:textSize="18sp"
             android:visibility="gone" />
+        
+        <ProgressBar
+            android:id="@+id/body_progress"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="100dp"
+            android:indeterminateDrawable="@xml/progress"
+            android:progressDrawable="@xml/progress" />
+        
     </LinearLayout>
 
 </ScrollView>

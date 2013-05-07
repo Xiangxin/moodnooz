@@ -1,6 +1,10 @@
 package com.moodnooz.server;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Calendar;
@@ -15,8 +19,11 @@ import org.w3c.dom.Node;
 
 public class UCDMoodNoozUtils {
 
-	private static HashMap<String, Vector<String>> posMap = new HashMap<String, Vector<String>>();
-	private static HashMap<String, Vector<String>> negMap = new HashMap<String, Vector<String>>();
+	static HashMap<String, Vector<String>> posMap = new HashMap<String, Vector<String>>();
+	static HashMap<String, Vector<String>> negMap = new HashMap<String, Vector<String>>();
+	static HashMap<String, String> irregularVerbMap = new HashMap<String, String>();
+	public static final String FILE_NAME_IRREGULAR_VERB = "irregular verb.idx";
+	
 	/**
 	 * @param dateString
 	 * @return a java Date object that correspond to the dateString
@@ -105,6 +112,27 @@ public class UCDMoodNoozUtils {
 			}
 		} catch (Exception e) {}
 	}
+	
+	public static void initializeIrregularVerbMap() {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(new File(FILE_NAME_IRREGULAR_VERB)));
+			String line = null;
+			while((line = reader.readLine()) != null) {
+				StringTokenizer tokenizer = new StringTokenizer(line, "\t\n", false);
+				String root = null;
+				if(tokenizer.hasMoreTokens()) 
+					root = tokenizer.nextToken().trim();
+				
+				while(tokenizer.hasMoreTokens()) {
+					irregularVerbMap.put(tokenizer.nextToken().trim(), root);
+				}
+			}
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found in the system.");
+		} catch(IOException e1) {
+			System.out.println("IOException");
+		}
+	}
 
 	public static Vector<String> getPositiveAssociation(String word) {
 		Vector<String> result = new Vector<String>();
@@ -164,5 +192,61 @@ public class UCDMoodNoozUtils {
 		}
 		
 		return dateFilterString;
+	}
+
+	public static boolean containsWord(String word) {
+		return posMap.containsKey(word) || negMap.containsKey(word);
+	}
+	
+	public static String getRootForm(String originalWord) {
+		String word = originalWord.trim().toLowerCase();
+		if(containsWord(word)) return originalWord;
+		
+		String modifiedWord = null;
+		if(word.length() >= 4) {
+			if (word.endsWith("thes") || word.endsWith("zes") || word.endsWith("ches") 
+					|| word.endsWith("shes") || word.endsWith("ses") || word.endsWith("xes")) {
+				modifiedWord = word.substring(0, word.length() - 2);
+				if(containsWord(modifiedWord))
+					return modifiedWord;
+			} else if(word.endsWith("ies") || word.endsWith("ied") || word.endsWith("ily")) {
+				modifiedWord = word.substring(0, word.length() - 3).concat("y");
+				if(containsWord(modifiedWord))
+					return modifiedWord;
+			} else if(word.endsWith("ly")) {
+				modifiedWord = word.substring(0, word.length() - 2);
+				if(containsWord(modifiedWord))
+					return modifiedWord;
+			} else if(word.endsWith("s") || word.endsWith("y")) {
+				modifiedWord = word.substring(0, word.length() - 1);
+				if(containsWord(modifiedWord))
+					return modifiedWord;
+			} else if(word.endsWith("ing")) {
+				modifiedWord = word.substring(0, word.length() - 3);
+				if(containsWord(modifiedWord))
+					return modifiedWord;
+				modifiedWord = word.substring(0, word.length() - 3).concat("e");
+				if(containsWord(modifiedWord))
+					return modifiedWord;
+				modifiedWord = word.substring(0, word.length() - 4);
+				if(containsWord(modifiedWord))
+					return modifiedWord;
+			} else if(word.endsWith("ed")) {
+				modifiedWord = word.substring(0, word.length() - 2);
+				if(containsWord(modifiedWord))
+					return modifiedWord;
+				modifiedWord = word.substring(0, word.length() - 2).concat("e");
+				if(containsWord(modifiedWord))
+					return modifiedWord;
+				modifiedWord = word.substring(0, word.length() - 3);
+				if(containsWord(modifiedWord))
+					return modifiedWord;
+			} 
+		}	
+		modifiedWord = irregularVerbMap.get(word);
+		if(modifiedWord == null)
+			return word;
+		else 
+			return modifiedWord;
 	}
 }

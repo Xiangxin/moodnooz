@@ -15,8 +15,9 @@
     <string name="none">none</string>
     <string name="ok">OK</string>
     <string name="tips">Tips</string>
-    <string name="tip1">To be decided.</string>
-    <string name="tip2">To be decided.</string>
+    <string name="tip1">* Queries should be typed in the format "word (symbol)word.." </string>
+    <string name="tip2">* Symbols are used to modify mood, + for positive, - for negative and ? for a general expansion.</string>
+    <string name="tip3">* Words with an added symbol are scored based on the terms related to both the word and the smybol.</string>
     <string name="got_it">Got it!</string>
 
     <!-- Search Result Page -->
@@ -30,6 +31,6 @@
     <string name="tweet_this"><u>Tweet this</u></string>
     <string name="tweet_msg">I just read an article on MoodNooz. Check this out - </string>
     <string name="twitter_not_found">Oops! Twitter is not found on your phone.</string>
-    <string name="load_body_fail_msg">The body is unable to load. It may contain purly video or images.</string>
+    <string name="load_body_fail_msg">Content currently not available. It may contain purly video or images.</string>
 
 </resources>

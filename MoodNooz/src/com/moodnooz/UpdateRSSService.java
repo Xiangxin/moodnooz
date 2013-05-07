@@ -3,7 +3,6 @@ package com.moodnooz;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
@@ -27,21 +26,15 @@ public class UpdateRSSService extends Service {
 
 			@Override
 			public void run() {
-//				String url = MoodNoozUtils.BASE_URL + "?action=update";
-//				DefaultHttpClient httpClient = new DefaultHttpClient();
-//				HttpGet httpGet = new HttpGet(url);
-//				HttpResponse httpResponse = null;
-//				Log.i(TAG, "request: " + httpGet.getRequestLine().toString());
-//				try {
-//					httpResponse = httpClient.execute(httpGet);
-//					Log.i(TAG, "update RSS response: " + httpResponse.getStatusLine().getStatusCode());
-//					
-//					String body = MoodNoozUtils.getStringResponseData(httpResponse);
-//					Log.d(TAG, "update RSS response body: " + body);
-//					
-//				} catch (Exception e) {
-//					Log.e(TAG, e.getLocalizedMessage());
-//				}
+				String url = MoodNoozUtils.BASE_URL + "?action=update";
+				DefaultHttpClient httpClient = new DefaultHttpClient();
+				HttpGet httpGet = new HttpGet(url);
+				Log.i(TAG, "request: " + httpGet.getRequestLine().toString());
+				try {
+					httpClient.execute(httpGet);
+				} catch (Exception e) {
+					Log.e(TAG, e.getLocalizedMessage());
+				}
 			}
 		}, 0, PERIOD);
 	}

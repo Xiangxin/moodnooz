@@ -81,7 +81,7 @@ public class BodyTextFetcher {
 			if(body != null) {
 								
 				// removes html tags
-				body = body.replaceAll("</p>\\s*", "\n")
+				body = body.replaceAll("</p>\\s*", "\n\n")
 						.replaceAll("<BR/>\\s*", "\n")
 						.replaceAll("<br/>\\s*", "\n")
 						.replaceAll("<\\s*\\/{0,1}[^>]*>", "")

@@ -1,13 +1,18 @@
 package com.moodnooz;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,7 +21,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.view.KeyEvent;
 
 public class MainActivity extends Activity {
 	
@@ -150,19 +154,68 @@ public class MainActivity extends Activity {
     	dateFilterDialog.show();
     }    
     
-    public void searchButtonClicked(View view) {
+    @SuppressLint("DefaultLocale")
+	public void searchButtonClicked(View view) {
     	searchString = searchBox.getText().toString();
+    	searchString = getSanitizedQueryString(searchString.toLowerCase());
     	Log.i(TAG, "date: " + dateFilterString + ", search string: " + searchString);
-    	if(MoodNoozUtils.isNetworkAvailable(getApplicationContext())) {
-    		Intent resultIntent = new Intent(this, SearchResultActivity.class);
-    		resultIntent.putExtra(NAME_SEARCH_STRING, searchString);
-    		resultIntent.putExtra(NAME_DATE_FILTER_STRING, dateFilterString);
-    		startActivity(resultIntent);		
-    	} else {
-			Toast.makeText(
+    	if(searchString == null || searchString.trim().length() == 0) {
+    		Toast.makeText(
+					MainActivity.this,
+					"Search string must contain some words.",
+					Toast.LENGTH_LONG).show();
+    	} else if(!MoodNoozUtils.isNetworkAvailable(getApplicationContext())) {
+    		Toast.makeText(
 					MainActivity.this,
 					"Network is not available. Please check internet connection.",
 					Toast.LENGTH_LONG).show();
+    	} else {
+    		Intent resultIntent = new Intent(this, SearchResultActivity.class);
+    		resultIntent.putExtra(NAME_SEARCH_STRING, searchString);
+    		resultIntent.putExtra(NAME_DATE_FILTER_STRING, dateFilterString);
+    		startActivity(resultIntent);
     	}
     }
+    
+	private String getSanitizedQueryString(String searchString) {
+		if (searchString == null)
+			return null;
+
+		String sanitizedString = "";
+		int count = 0;
+		char current;
+
+		// remove non-alphanumeric characters except for '+', '-' and '?' if
+		// they proceed a word
+		while (count < searchString.length()) {
+			current = searchString.charAt(count);
+			if (isAlphanumeric(current) || current == ' ') {
+				sanitizedString = sanitizedString + current;
+			} else if (current == '+' || current == '-' || current == '?') {
+				if (isAlphanumeric(searchString.charAt(count + 1)))
+					sanitizedString = sanitizedString + current;
+			}
+			count++;
+		}
+
+		// remove duplicated words
+		String[] tokens = sanitizedString.split(" ");
+		Set<String> set = new HashSet<String>();
+		for (String token : tokens) {
+			set.add(token);
+		}
+
+		sanitizedString = "";
+		Iterator<String> iter = set.iterator();
+		while (iter.hasNext()) {
+			sanitizedString += iter.next() + " ";
+		}
+
+		Log.i(TAG, "sanitized string: " + sanitizedString);
+		return sanitizedString;
+	}
+
+	private static boolean isAlphanumeric(char c) {
+		return ('a' <= c && c <= 'z') || ('0' <= c && c <= '9');
+	}
 }

@@ -37,6 +37,7 @@ public class BodyTextActivity extends Activity {
 	TextView bodyView;
 	TextView tweetView;
 	View loadBodyFailView;
+	View progress;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class BodyTextActivity extends Activity {
         bodyView = (TextView)findViewById(R.id.body);
         tweetView = (TextView)findViewById(R.id.body_twitter);
         loadBodyFailView = findViewById(R.id.load_body_fail_msg);
+        progress = findViewById(R.id.body_progress);
         
         titleView.setText(getIntent().getStringExtra(SearchResultActivity.EXTRA_TITLE));
         simpSource = getIntent().getStringExtra(SearchResultActivity.EXTRA_SIMP_SOURCE);
@@ -116,7 +118,13 @@ public class BodyTextActivity extends Activity {
 		}
 		
 		@Override
-		protected void onPostExecute(Void v) {
+		protected void onPostExecute(Void v) {	
+			progress.setVisibility(View.GONE);
+			if(bodyText == null || bodyText.length() == 0) {
+				loadBodyFailView.setVisibility(View.VISIBLE);
+				return;
+			}
+			loadBodyFailView.setVisibility(View.GONE);
 			
 			// Log.i(TAG, "bodyText for link (" + link + "), source (" + simpSource + "): " + bodyText);
 			SharedPreferences prefs = MoodNoozUtils.getSharedPreferences(getApplicationContext());
@@ -127,18 +135,24 @@ public class BodyTextActivity extends Activity {
 				while(iter.hasNext()) {
 					String key = iter.next();
 					String value = pairs.get(key);
+					
+					String regExp = "";
+					for(int i = 0; i < key.length(); i++) {
+						regExp += "[" + key.charAt(i) + (char)(key.charAt(i) + 'A' - 'a') +"]";
+					}
+					
+					Log.i(TAG, "reg exp: " + regExp);
+					
 					if(value.equals("e"))
-						bodyText = bodyText.replaceAll(key, "<font color=\"yellow\">" + key + "</font>");
+						bodyText = bodyText.replaceAll(regExp, "<font color=\"#dda929\">" + key + "</font>");
 					else if(value.equals("p"))
-						bodyText = bodyText.replaceAll(key, "<font color=\"red\">" + key + "</font>");
+						bodyText = bodyText.replaceAll(regExp, "<font color=\"red\">" + key + "</font>");
 					else if(value.equals("n"))
-						bodyText = bodyText.replaceAll(key, "<font color=\"blue\">" + key + "</font>");
+						bodyText = bodyText.replaceAll(regExp, "<font color=\"blue\">" + key + "</font>");
 					else if(value.equals("b"))
-						bodyText = bodyText.replaceAll(key, "<font color=\"green\">" + key + "</font>");
+						bodyText = bodyText.replaceAll(regExp, "<font color=\"green\">" + key + "</font>");
 				}
 				
-				bodyText = bodyText.replaceAll("the", "<font color=\"green\">the</font>");
-				loadBodyFailView.setVisibility(View.GONE);
 				bodyView.setText(Html.fromHtml(bodyText));
 			} catch (Exception e) {
 				loadBodyFailView.setVisibility(View.VISIBLE);

@@ -201,9 +201,7 @@ public class UCDMoodNoozServlet extends HttpServlet {
 				resp.setCharacterEncoding("UTF-8");
 				resp.setContentType("text/plain");
 				writer.write(BodyTextFetcher.getBodyText(url, simpSource));
-			} catch (Exception e) {
-				writer.write(e.getMessage());
-			}
+			} catch (Exception e) {}
 			return;
 		}
 	
@@ -225,6 +223,8 @@ public class UCDMoodNoozServlet extends HttpServlet {
 		is = context.getResourceAsStream(FILE_NAME_NEGATIVE);
 		UCDMoodNoozUtils.initializeMap(is, false);
 		
+		UCDMoodNoozUtils.initializeIrregularVerbMap();
+		
 		StringBuilder queryStringBuilder = new StringBuilder();
 		String dateFilterString = UCDMoodNoozUtils.getDateFilterString(period);
 		if(dateFilterString != null)
@@ -235,15 +235,15 @@ public class UCDMoodNoozServlet extends HttpServlet {
 				String word = words[i];
 				Vector<String> associations = null; 
 				if(word.startsWith("+")) {
-					word = word.substring(1);
+					word = UCDMoodNoozUtils.getRootForm(word.substring(1));
 					associations = UCDMoodNoozUtils.getPositiveAssociation(word);
 					positive.addAll(associations);
 				} else if(word.startsWith("-")) {
-					word = word.substring(1);
+					word = UCDMoodNoozUtils.getRootForm(word.substring(1));
 					associations = UCDMoodNoozUtils.getNegativeAssociation(word);
 					negative.addAll(associations);
 				} else if(word.startsWith("?")) {
-					word = word.substring(1);
+					word = UCDMoodNoozUtils.getRootForm(word.substring(1));
 					associations = UCDMoodNoozUtils.getAssociation(word);
 					both.addAll(associations);
 				} else {
