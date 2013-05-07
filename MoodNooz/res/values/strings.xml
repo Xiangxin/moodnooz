@@ -13,13 +13,23 @@
     <string name="this_month">this month</string>
     <string name="this_year">this year</string>
     <string name="none">none</string>
-    <string name="ok">Ok</string>
-    
-    
+    <string name="ok">OK</string>
+    <string name="tips">Tips</string>
+    <string name="tip1">To be decided.</string>
+    <string name="tip2">To be decided.</string>
+    <string name="got_it">Got it!</string>
+
     <!-- Search Result Page -->
     <string name="summary">Summary</string>
-    <string name="search_error">Oops! An error occurred. Please try again later.</string>
-    <string name="no_result">Sorry, no matching result. :(</string>
+    <string name="suggestion">Please revise your query and try again.</string>
+    <string name="search_error">Oops! An error occurred.</string>
+    <string name="no_result">Oops! No matching result.</string>
     <string name="back">Back</string>
-    
+
+    <!-- Body Text Page -->
+    <string name="tweet_this"><u>Tweet this</u></string>
+    <string name="tweet_msg">I just read an article on MoodNooz. Check this out - </string>
+    <string name="twitter_not_found">Oops! Twitter is not found on your phone.</string>
+    <string name="load_body_fail_msg">The body is unable to load. It may contain purly video or images.</string>
+
 </resources>

@@ -11,9 +11,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.KeyEvent;
 
 public class MainActivity extends Activity {
 	
@@ -26,16 +29,29 @@ public class MainActivity extends Activity {
 	String dateFilterString;
 	String searchString;
 	Dialog dateFilterDialog;
-	View okBtn;
+	Dialog infoDialog;
+	View okBtn, gotItBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         startService(new Intent(this, UpdateRSSService.class));
         searchBox = (EditText) findViewById(R.id.search_box);
-        if(searchBox != null)
+        if(searchBox != null) {
         	searchString = searchBox.getText().toString();
+        	searchBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                        searchButtonClicked(null);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+        }
         dateFilterString = getString(R.string.none);
     }
 
@@ -46,7 +62,24 @@ public class MainActivity extends Activity {
     }
     
     public void infoButtonClicked(View view) {
-    	Toast.makeText(MainActivity.this, "Not implemented yet :(", Toast.LENGTH_LONG).show();
+    	if(infoDialog == null) {
+    		infoDialog = new Dialog(MainActivity.this, R.style.dialogstyle);
+    		infoDialog.setContentView(R.layout.info_dialog);
+    	}
+    	
+    	if(gotItBtn == null) {
+    		gotItBtn = infoDialog.findViewById(R.id.got_it);
+    		gotItBtn.setOnClickListener(new OnClickListener(){
+
+    			@Override
+    			public void onClick(View v) {
+    		    	Log.i(TAG, "got it button clicked.");
+    		    	infoDialog.dismiss();
+    			}		
+        	});
+    	}
+    	
+    	infoDialog.show();
     }
 
     public void calendarButtonClicked(View view) {
@@ -77,7 +110,8 @@ public class MainActivity extends Activity {
     	TextView this_year = (TextView) dateFilterDialog.findViewById(R.id.this_year);
     	TextView none = (TextView) dateFilterDialog.findViewById(R.id.none);
     	
-    	none.setCompoundDrawables(null , null, img, null);
+    	if(dateFilterString.equals(getString(R.string.none)))
+    		none.setCompoundDrawables(null , null, img, null);
     	
     	dateChoices.add(today);
     	dateChoices.add(this_week);

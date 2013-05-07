@@ -118,7 +118,6 @@
         android:layout_height="50dp"
         android:background="@color/btn_bg"
         android:gravity="center"
-        android:onClick="dateFilterDialogOkButtonClicked"
         android:text="@string/ok"
         android:textColor="@color/white"
         android:textSize="26dp" />

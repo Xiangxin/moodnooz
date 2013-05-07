@@ -8,106 +8,141 @@
 package com.moodnooz;
 
 public final class R {
+    public static final class anim {
+        public static final int fade_in=0x7f040000;
+        public static final int fade_out=0x7f040001;
+    }
     public static final class attr {
     }
     public static final class color {
-        public static final int btn_bg=0x7f050002;
-        public static final int btn_bg_selected=0x7f050003;
-        public static final int search_page_top_bar=0x7f050001;
-        public static final int transparent=0x7f050000;
-        public static final int white=0x7f050004;
+        public static final int btn_bg=0x7f060002;
+        public static final int btn_bg_selected=0x7f060003;
+        public static final int light_purple=0x7f060005;
+        public static final int search_page_top_bar=0x7f060001;
+        public static final int transparent=0x7f060000;
+        /**  <color name="btn_bg">#5E5B9B</color>
+    <color name="btn_bg_selected">#4E4881</color> 
+         */
+        public static final int white=0x7f060004;
     }
     public static final class dimen {
-        public static final int padding_large=0x7f060002;
-        public static final int padding_medium=0x7f060001;
-        public static final int padding_small=0x7f060000;
+        public static final int padding_large=0x7f070002;
+        public static final int padding_medium=0x7f070001;
+        public static final int padding_small=0x7f070000;
     }
     public static final class drawable {
-        public static final int background=0x7f020000;
-        public static final int calendar_btn=0x7f020001;
-        public static final int calendar_btn_pressed=0x7f020002;
-        public static final int calendar_button=0x7f020003;
-        public static final int divider=0x7f020004;
-        public static final int grey_texture_segment=0x7f020005;
-        public static final int ic_action_search=0x7f020006;
-        public static final int ic_launcher=0x7f020007;
-        public static final int info_btn=0x7f020008;
-        public static final int info_btn_pressed=0x7f020009;
-        public static final int info_button=0x7f02000a;
-        public static final int line_textedit_purple=0x7f02000b;
-        public static final int search_box_bg=0x7f02000c;
-        public static final int search_btn=0x7f02000d;
-        public static final int search_btn_pressed=0x7f02000e;
-        public static final int search_button=0x7f02000f;
-        public static final int tick=0x7f020010;
+        public static final int back_button=0x7f020000;
+        public static final int background=0x7f020001;
+        public static final int bg_back=0x7f020002;
+        public static final int bg_back_pressed=0x7f020003;
+        public static final int bg_summary=0x7f020004;
+        public static final int bg_summary_pressed=0x7f020005;
+        public static final int calendar_btn=0x7f020006;
+        public static final int calendar_btn_pressed=0x7f020007;
+        public static final int calendar_button=0x7f020008;
+        public static final int divider=0x7f020009;
+        public static final int grey_texture_segment=0x7f02000a;
+        public static final int ic_action_search=0x7f02000b;
+        public static final int icon=0x7f02000c;
+        public static final int info_btn=0x7f02000d;
+        public static final int info_btn_pressed=0x7f02000e;
+        public static final int info_button=0x7f02000f;
+        public static final int line_textedit_purple=0x7f020010;
+        public static final int listview_divider=0x7f020011;
+        public static final int sad_face=0x7f020012;
+        public static final int search_box_bg=0x7f020013;
+        public static final int search_btn=0x7f020014;
+        public static final int search_btn_pressed=0x7f020015;
+        public static final int search_button=0x7f020016;
+        public static final int summary_button=0x7f020017;
+        public static final int tick=0x7f020018;
+        public static final int twitter=0x7f020019;
     }
     public static final class id {
-        public static final int body=0x7f0a0009;
-        public static final int body_date=0x7f0a0007;
-        public static final int body_link=0x7f0a0008;
-        public static final int body_source=0x7f0a0006;
-        public static final int body_title=0x7f0a0005;
-        public static final int calendar_button=0x7f0a0000;
-        public static final int date=0x7f0a0013;
-        public static final int date_ok=0x7f0a000f;
-        public static final int description=0x7f0a0011;
-        public static final int fail_msg=0x7f0a0018;
-        public static final int info_button=0x7f0a0001;
-        public static final int menu_settings=0x7f0a001a;
-        public static final int moodnooz_text_view=0x7f0a0002;
-        public static final int none=0x7f0a000e;
-        public static final int progress=0x7f0a0016;
-        public static final int relativeLayout1=0x7f0a0014;
-        public static final int search_box=0x7f0a0003;
-        public static final int search_button=0x7f0a0004;
-        public static final int search_fail_layout=0x7f0a0017;
-        public static final int search_result_list=0x7f0a0019;
-        public static final int source=0x7f0a0012;
-        public static final int summary_button=0x7f0a0015;
-        public static final int this_month=0x7f0a000c;
-        public static final int this_week=0x7f0a000b;
-        public static final int this_year=0x7f0a000d;
-        public static final int title=0x7f0a0010;
-        public static final int today=0x7f0a000a;
+        public static final int back_button=0x7f0b0018;
+        public static final int back_text_view=0x7f0b001d;
+        public static final int body=0x7f0b000a;
+        public static final int body_date=0x7f0b0006;
+        public static final int body_link=0x7f0b0009;
+        public static final int body_source=0x7f0b0007;
+        public static final int body_title=0x7f0b0005;
+        public static final int body_twitter=0x7f0b0008;
+        public static final int calendar_button=0x7f0b0000;
+        public static final int date=0x7f0b0016;
+        public static final int date_ok=0x7f0b0011;
+        public static final int description=0x7f0b0014;
+        public static final int fail_msg=0x7f0b001c;
+        public static final int got_it=0x7f0b0012;
+        public static final int info_button=0x7f0b0001;
+        public static final int load_body_fail_msg=0x7f0b000b;
+        public static final int menu_settings=0x7f0b001f;
+        public static final int moodnooz_text_view=0x7f0b0002;
+        public static final int none=0x7f0b0010;
+        public static final int progress=0x7f0b001a;
+        public static final int relativeLayout1=0x7f0b0017;
+        public static final int search_box=0x7f0b0003;
+        public static final int search_button=0x7f0b0004;
+        public static final int search_fail_layout=0x7f0b001b;
+        public static final int search_result_list=0x7f0b001e;
+        public static final int source=0x7f0b0015;
+        public static final int summary_button=0x7f0b0019;
+        public static final int this_month=0x7f0b000e;
+        public static final int this_week=0x7f0b000d;
+        public static final int this_year=0x7f0b000f;
+        public static final int title=0x7f0b0013;
+        public static final int today=0x7f0b000c;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
         public static final int body_text_layout=0x7f030001;
         public static final int date_filter_dialog=0x7f030002;
-        public static final int search_result_item=0x7f030003;
-        public static final int search_result_layout=0x7f030004;
+        public static final int info_dialog=0x7f030003;
+        public static final int search_result_item=0x7f030004;
+        public static final int search_result_layout=0x7f030005;
+        public static final int splash=0x7f030006;
     }
     public static final class menu {
-        public static final int activity_main=0x7f090000;
+        public static final int activity_main=0x7f0a0000;
     }
     public static final class string {
         /**  Main Page 
          */
-        public static final int app_name=0x7f070000;
-        public static final int back=0x7f070010;
-        public static final int filter_by_date=0x7f070006;
-        public static final int hint_search=0x7f070005;
-        public static final int menu_settings=0x7f070003;
-        public static final int mood=0x7f070001;
-        public static final int no_result=0x7f07000f;
-        public static final int none=0x7f07000b;
-        public static final int nooz=0x7f070002;
-        public static final int ok=0x7f07000c;
-        public static final int search_error=0x7f07000e;
+        public static final int app_name=0x7f080000;
+        public static final int back=0x7f080015;
+        public static final int filter_by_date=0x7f080006;
+        public static final int got_it=0x7f080010;
+        public static final int hint_search=0x7f080005;
+        public static final int load_body_fail_msg=0x7f080019;
+        public static final int menu_settings=0x7f080003;
+        public static final int mood=0x7f080001;
+        public static final int no_result=0x7f080014;
+        public static final int none=0x7f08000b;
+        public static final int nooz=0x7f080002;
+        public static final int ok=0x7f08000c;
+        public static final int search_error=0x7f080013;
+        public static final int suggestion=0x7f080012;
         /**  Search Result Page 
          */
-        public static final int summary=0x7f07000d;
-        public static final int this_month=0x7f070009;
-        public static final int this_week=0x7f070008;
-        public static final int this_year=0x7f07000a;
-        public static final int title_activity_main=0x7f070004;
-        public static final int today=0x7f070007;
+        public static final int summary=0x7f080011;
+        public static final int this_month=0x7f080009;
+        public static final int this_week=0x7f080008;
+        public static final int this_year=0x7f08000a;
+        public static final int tip1=0x7f08000e;
+        public static final int tip2=0x7f08000f;
+        public static final int tips=0x7f08000d;
+        public static final int title_activity_main=0x7f080004;
+        public static final int today=0x7f080007;
+        public static final int tweet_msg=0x7f080017;
+        /**  Body Text Page 
+         */
+        public static final int tweet_this=0x7f080016;
+        public static final int twitter_not_found=0x7f080018;
     }
     public static final class style {
-        public static final int AppTheme=0x7f080000;
-        public static final int dialogstyle=0x7f080001;
+        public static final int AppTheme=0x7f090000;
+        public static final int dialogstyle=0x7f090001;
     }
     public static final class xml {
-        public static final int progress=0x7f040000;
+        public static final int progress=0x7f050000;
     }
 }

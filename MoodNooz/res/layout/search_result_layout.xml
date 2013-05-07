@@ -1,16 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background" >
+    android:background="@drawable/background"
+    android:orientation="vertical"
+    android:weightSum="19" >
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_gravity="center_vertical"
+        android:layout_weight="2"
         android:alpha="0.7"
-        android:background="@color/search_page_top_bar" >
+        android:background="@color/btn_bg"
+        android:gravity="center_vertical" >
+
+        <com.moodnooz.ui.MoodNoozTextViewGosmick
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/back_button"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="backButtonClicked"
+            android:paddingLeft="7dp"
+            android:paddingRight="7dp"
+            android:text="@string/back"
+            android:textColor="@color/white"
+            android:textSize="21sp" />
 
         <com.moodnooz.ui.MoodNoozTextViewGosmick
             android:id="@+id/summary_button"
@@ -18,52 +38,86 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
+            android:background="@drawable/summary_button"
+            android:clickable="true"
+            android:gravity="center"
             android:onClick="summaryButtonClicked"
-            android:text="@string/summary" />
+            android:paddingLeft="7dp"
+            android:paddingRight="7dp"
+            android:text="@string/summary"
+            android:textColor="@color/white"
+            android:textSize="21sp"
+            android:visibility="invisible" />
     </RelativeLayout>
 
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_below="@+id/relativeLayout1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="148dp"
-        android:indeterminateDrawable="@xml/progress"
-        android:progressDrawable="@xml/progress" />
-
-    <LinearLayout
-        android:id="@+id/search_fail_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone" >
-
-        <com.moodnooz.ui.MoodNoozTextViewGosmick
-            android:id="@+id/fail_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/search_error" />
-
-        <com.moodnooz.ui.MoodNoozTextViewGosmick
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/btn_bg"
-            android:text="@string/back" />
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/search_result_list"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:choiceMode="none"
-        android:divider="@color/transparent"
-        android:fadingEdgeLength="0px"
-        android:footerDividersEnabled="false"
-        android:headerDividersEnabled="false"
-        android:visibility="gone" >
-    </ListView>
+        android:layout_height="0dp"
+        android:layout_weight="17" >
 
-</RelativeLayout>
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_below="@+id/relativeLayout1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="155dp"
+            android:indeterminateDrawable="@xml/progress"
+            android:progressDrawable="@xml/progress" />
+
+        <LinearLayout
+            android:id="@+id/search_fail_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:visibility="gone" >
+
+            <com.moodnooz.ui.MoodNoozTextViewGosmick
+                android:id="@+id/fail_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/search_error"
+                android:textSize="20sp" />
+
+            <com.moodnooz.ui.MoodNoozTextViewGosmick
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="@string/suggestion"
+                android:textSize="20sp" />
+
+            <com.moodnooz.ui.MoodNoozTextViewGosmick
+                android:id="@+id/back_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/back_button"
+                android:clickable="true"
+                android:gravity="center"
+                android:onClick="backButtonClicked"
+                android:text="@string/back"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/search_result_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:choiceMode="none"
+            android:divider="@color/btn_bg"
+            android:fadingEdgeLength="0px"
+            android:footerDividersEnabled="false"
+            android:headerDividersEnabled="false"
+            android:paddingLeft="7dp"
+            android:paddingRight="7dp"
+            android:visibility="gone" >
+        </ListView>
+    </RelativeLayout>
+
+</LinearLayout>

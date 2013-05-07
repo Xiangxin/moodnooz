@@ -16,7 +16,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
+            android:layout_marginRight="12dp"
             android:layout_toLeftOf="@+id/info_button"
             android:background="@drawable/calendar_button"
             android:onClick="calendarButtonClicked" />
@@ -27,7 +27,7 @@
             android:layout_height="45dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
+            android:layout_marginRight="12dp"
             android:background="@drawable/info_button"
             android:onClick="infoButtonClicked" />
     </RelativeLayout>
@@ -44,14 +44,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/mood"
-            android:textSize="46dp" />
+            android:textSize="46sp" />
 
         <com.moodnooz.ui.MoodNoozTextViewGosmickItalic
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/nooz"
             android:paddingRight="10dp"
-            android:textSize="46dp" />
+            android:text="@string/nooz"
+            android:textSize="46sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -68,24 +68,25 @@
             android:id="@+id/search_box"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginRight="3dp"
             android:layout_weight="1"
             android:background="@drawable/search_box_bg"
-            android:hint="@string/hint_search"
-            android:textSize="20dp"
             android:gravity="bottom"
+            android:hint="@string/hint_search"
+            android:imeOptions="actionSearch"
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
-            android:layout_marginRight="3dp"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textSize="20sp" />
 
         <ImageView
             android:id="@+id/search_button"
             android:layout_width="37dp"
             android:layout_height="37dp"
-            android:scaleType="centerInside"
             android:gravity="right"
-            android:src="@drawable/search_button"
-            android:onClick="searchButtonClicked" />
+            android:onClick="searchButtonClicked"
+            android:scaleType="centerInside"
+            android:src="@drawable/search_button" />
     </LinearLayout>
 
 </RelativeLayout>

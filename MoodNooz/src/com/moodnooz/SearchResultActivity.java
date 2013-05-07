@@ -16,22 +16,27 @@ import org.json.JSONTokener;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SearchResultActivity extends Activity {
 	
 	public static final String TAG = SearchResultActivity.class.getSimpleName();
 	public static final String EXTRA_TITLE = "title";
-	public static final String EXTRA_SOURCE = "sourceDate";
+	public static final String EXTRA_SOURCE = "source";
+	public static final String EXTRA_SIMP_SOURCE = "simpSource";
 	public static final String EXTRA_DATE= "date";
 	public static final String EXTRA_LINK = "link";
 	
@@ -40,15 +45,21 @@ public class SearchResultActivity extends Activity {
 	LinearLayout searchFailLayout;
 	TextView searchFailTextView;
 	ListView searchResultList;
+	View summaryButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.search_result_layout);
         
         progress = (ProgressBar) findViewById(R.id.progress);
         searchFailLayout = (LinearLayout) findViewById(R.id.search_fail_layout);
         searchFailTextView = (TextView) findViewById(R.id.fail_msg);
+        Drawable img = getResources().getDrawable(R.drawable.sad_face);
+    	img.setBounds(0, 0, 50, 50);
+    	searchFailTextView.setCompoundDrawables(img, null, null, null);
+    	summaryButton = findViewById(R.id.summary_button);
         searchResultList = (ListView) findViewById(R.id.search_result_list);
         
         String searchString = getIntent().getStringExtra(MainActivity.NAME_SEARCH_STRING);
@@ -68,12 +79,21 @@ public class SearchResultActivity extends Activity {
 				Document doc = adapter.getItem(pos);
 				Intent intent = new Intent(SearchResultActivity.this, BodyTextActivity.class);
 				intent.putExtra(EXTRA_TITLE, doc.title);
+				intent.putExtra(EXTRA_SIMP_SOURCE, doc.simplifiedSource);
 				intent.putExtra(EXTRA_SOURCE, doc.source);
 				intent.putExtra(EXTRA_DATE, doc.date);
 				intent.putExtra(EXTRA_LINK, doc.link);
 				startActivity(intent);
 			}
 		});
+	}
+	
+	public void backButtonClicked(View view) {
+		finish();
+	}
+	
+	public void summaryButtonClicked(View view) {
+		Toast.makeText(SearchResultActivity.this, "Not implemented yet :(", Toast.LENGTH_LONG).show();
 	}
 
 	public class SendSearchStringToServerTask extends AsyncTask<String, Void, JSONObject> {
@@ -108,7 +128,7 @@ public class SearchResultActivity extends Activity {
 				if (httpResponse.getStatusLine().getStatusCode() == 200) {
 					String responseBody = MoodNoozUtils
 							.getStringResponseData(httpResponse);
-					Log.i(TAG, "response body: \"" + responseBody + "\"");
+					// Log.i(TAG, "response body: \"" + responseBody + "\"");
 					return ((JSONObject) new JSONTokener(responseBody)
 							.nextValue());
 				}
@@ -125,21 +145,27 @@ public class SearchResultActivity extends Activity {
 				progress.setVisibility(View.GONE);
 			
 			if (responseObject == null) {
+				Log.i(TAG, "server respond body is null!");
 				searchResultList.setVisibility(View.GONE);
+				summaryButton.setVisibility(View.INVISIBLE);
 				searchFailLayout.setVisibility(View.VISIBLE);
 				searchFailTextView.setText(getString(R.string.search_error));
+				return;
 			}
 				
 			try {
 				JSONArray documents = responseObject.getJSONArray("documents");
 				
 				if(documents == null || documents.length() == 0) {
+					Log.i(TAG, "no documents!");
 					searchResultList.setVisibility(View.GONE);
+					summaryButton.setVisibility(View.INVISIBLE);
 					searchFailLayout.setVisibility(View.VISIBLE);
 					searchFailTextView.setText(getString(R.string.no_result));
 					return;
 				}
 				
+				summaryButton.setVisibility(View.VISIBLE);
 				searchResultList.setVisibility(View.VISIBLE);
 				searchFailLayout.setVisibility(View.GONE);
 				
@@ -151,18 +177,14 @@ public class SearchResultActivity extends Activity {
 							.getString("title"), doc.getString("source"), doc
 							.getString("date"), doc.getString("description"),
 							null));
-					
-					Log.i(TAG, doc.getString("title") + " | "
-									+ doc.getString("link") + " | "
-									+ doc.getString("date") + " | "
-									+ doc.getString("source") + " | "
-									+ doc.getString("description"));
 				}
 				
 				adapter = new SearchResultAdapter(SearchResultActivity.this, adapterFood);
+				searchResultList.setAdapter(adapter);
 				
 			} catch (Exception e) {
 				searchResultList.setVisibility(View.GONE);
+				summaryButton.setVisibility(View.INVISIBLE);
 				searchFailLayout.setVisibility(View.VISIBLE);
 				searchFailTextView.setText(getString(R.string.search_error));
 			}
@@ -174,14 +196,31 @@ public class SearchResultActivity extends Activity {
 				JSONArray positive = (JSONArray) words.get("positive");
 				JSONArray negative = (JSONArray) words.get("negative");
 				JSONArray both = (JSONArray) words.get("both");
-
+				
+				SharedPreferences prefs = MoodNoozUtils.getSharedPreferences(getApplicationContext());
+				prefs.edit().clear().commit();
+				
+				int i;
+				for(i = 0; i < essential.length(); i++) {
+					prefs.edit().putString(essential.getString(i), "e");
+				}
+				for(i = 0; i < positive.length(); i++) {
+					prefs.edit().putString(positive.getString(i), "p");
+				}
+				for(i = 0; i < negative.length(); i++) {
+					prefs.edit().putString(negative.getString(i), "n");
+				}
+				for(i = 0; i < both.length(); i++) {
+					prefs.edit().putString(both.getString(i), "b");
+				}
+				prefs.edit().commit();
 				Log.i(TAG, "essential: " + essential.toString());
 				Log.i(TAG, "positive: " + positive.toString());
 				Log.i(TAG, "negative: " + negative.toString());
 				Log.i(TAG, "both: " + both.toString());
 			} catch (JSONException e) {
 				Log.e(TAG, "error at SendSearchStringToServerTask onPostExecute() parsing words: "
-								+ e.getLocalizedMessage());
+								+ e.getMessage());
 			}
 		}
 	}

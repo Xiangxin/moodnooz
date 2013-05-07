@@ -15,12 +15,12 @@
         android:useLevel="false" >
 
         <size
-            android:height="30dip"
-            android:width="30dip" />
+            android:height="40dp"
+            android:width="40dp" />
 
         <gradient
             android:angle="0"
-            android:endColor="@color/btn_bg"
+            android:endColor="@color/light_purple"
             android:startColor="@color/btn_bg_selected"
             android:type="sweep"
             android:useLevel="false" />

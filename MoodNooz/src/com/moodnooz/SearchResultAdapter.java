@@ -19,6 +19,7 @@ public class SearchResultAdapter extends ArrayAdapter<Document> {
 	public SearchResultAdapter(Activity activity, List<Document> source) {
 		super(activity, R.layout.search_result_item, source);
 		results = source;
+		inflater = LayoutInflater.from(activity);
 	}
 	
 	@Override
@@ -47,6 +48,7 @@ public class SearchResultAdapter extends ArrayAdapter<Document> {
 			holder.date = (TextView) convertView.findViewById(R.id.date);
 			if(convertView != null) convertView.setTag(holder);
 		}
+		
 		if (holder == null) {
 			Log.e(TAG, "holder is null!");
 			return null;
