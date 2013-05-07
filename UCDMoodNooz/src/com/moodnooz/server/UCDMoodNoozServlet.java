@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
@@ -47,6 +49,8 @@ public class UCDMoodNoozServlet extends HttpServlet {
 	
 	public static final String PARAM_ACTION = "action";
 	public static final String PARAM_STRING = "string";
+	public static final String PARAM_URL = "url";
+	public static final String PARAM_SOURCE = "source";
 	public static final String PARAM_PERIOD = "period"; // either "today", "this_week", "this_month" or "this_year"
 	public static final String TYPE_QUERY = "query";
 	public static final String TYPE_UPDATE = "update";
@@ -66,51 +70,88 @@ public class UCDMoodNoozServlet extends HttpServlet {
 	public static final String SOURCE_BBC = "c";
 	
 	public static final int LIMIT = 100;
+	PrintWriter getWriter;
 		
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("text/plain");
-		PrintWriter writer = resp.getWriter();
-		writer.println("raw query : " + req.toString());		
+		getWriter = resp.getWriter();
+		//getWriter.println("raw query : " + req.toString());		
 		String type = req.getParameter(PARAM_ACTION);
-		if(type != null && type.equalsIgnoreCase(TYPE_UPDATE)) {	
+		if(type != null && type.equalsIgnoreCase(TYPE_UPDATE)) {
+			int random = (int) (Math.random() * 3);
 			try {
-				fetch("http://www.irishtimes.com/cmlink/news-1.1319192", SOURCE_THE_IRISH_TIME);
-				fetch("http://feeds.guardian.co.uk/theguardian/world/rss", SOURCE_GUARDIAN);
-				fetch("http://feeds.bbci.co.uk/news/rss.xml?edition=int", SOURCE_BBC);
-			} catch (IOException e) {
+				//deleteAll();
+				if(random == 0) {
+					fetch("http://www.irishtimes.com/cmlink/news-1.1319192", SOURCE_THE_IRISH_TIME);
+					fetch("http://feeds.guardian.co.uk/theguardian/world/rss", SOURCE_GUARDIAN);
+					fetch("http://feeds.bbci.co.uk/news/rss.xml?edition=int", SOURCE_BBC);
+				} else if(random == 1) {
+					fetch("http://feeds.bbci.co.uk/news/rss.xml?edition=int", SOURCE_BBC);
+					fetch("http://www.irishtimes.com/cmlink/news-1.1319192", SOURCE_THE_IRISH_TIME);
+					fetch("http://feeds.guardian.co.uk/theguardian/world/rss", SOURCE_GUARDIAN);
+				} else {
+					fetch("http://feeds.guardian.co.uk/theguardian/world/rss", SOURCE_GUARDIAN);
+					fetch("http://feeds.bbci.co.uk/news/rss.xml?edition=int", SOURCE_BBC);
+					fetch("http://www.irishtimes.com/cmlink/news-1.1319192", SOURCE_THE_IRISH_TIME);	
+				}
+				
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} 
 	}
 
-	public void fetch(String url, String source) throws IOException {
-//		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+	public void fetch(String url, String source) {
+		
 		try {
 			URL rssfeed = new URL(url);
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			org.w3c.dom.Document document = builder.parse(rssfeed.openStream());
+			
 			NodeList nodes = document.getElementsByTagName("item");
+			
+			//getWriter.write("node length: " + nodes.getLength() + "\n");
 
 			for(int i = 0; i < nodes.getLength(); i++) {
 				
 				Element element = (Element)nodes.item(i);
 				
-				String link = UCDMoodNoozUtils.getElementValue(element,"link").trim();
-				String title = UCDMoodNoozUtils.getElementValue(element,"title").trim();
-				String dateString = UCDMoodNoozUtils.getElementValue(element,"pubDate").trim();		
-				Date date = UCDMoodNoozUtils.getDateFromString(dateString);
-				String description = UCDMoodNoozUtils.getElementValue(element,"description").trim();
-				String body = BodyTextFetcher.getBodyText(link, source);
-			    
-			    Document doc = Document.newBuilder().setId(link)
-			    	    .addField(Field.newBuilder().setName("link").setAtom(link))
-			    	    .addField(Field.newBuilder().setName("title").setAtom(title))
-			    	    .addField(Field.newBuilder().setName("date").setDate(date))
-			    	    .addField(Field.newBuilder().setName("source").setAtom(source))
-			    	    .addField(Field.newBuilder().setName("description").setAtom(description))
-			    	    .addField(Field.newBuilder().setName("body").setText(body))
-			    	    .build();
+				//getWriter.write("\nelement" + i + "\n ");
+				
+				Document doc = null;
+				try {
+					String link = UCDMoodNoozUtils.getElementValue(element,"link").trim();
+					//getWriter.write(link + "\n");
+					String title = UCDMoodNoozUtils.getElementValue(element,"title").trim();
+					String dateString = UCDMoodNoozUtils.getElementValue(element,"pubDate").trim();		
+					Date date = UCDMoodNoozUtils.getDateFromString(dateString);
+					String description = UCDMoodNoozUtils.getElementValue(element,"description").trim();
+					if(source.equals("b")) {
+						Pattern pattern = Pattern.compile("<p\\s*[Cc][Ll][Aa][Ss][Ss]\\s*=\\s*\"standfirst\"\\s*>[^<]+<\\s*\\/{0,1}[^>]*\\s*>");
+						Matcher matcher = pattern.matcher(description);
+						if(matcher.find()) {
+							description = matcher.group();
+							description = description.replaceAll("<\\s*\\/{0,1}[^>]*\\s*>", "");
+						}
+					}
+					
+					//getWriter.write(description + "\n");
+					
+					String body = BodyTextFetcher.getBodyText(link, source);
+					
+					doc = Document.newBuilder().setId(link)
+						    .addField(Field.newBuilder().setName("link").setAtom(link))
+						    .addField(Field.newBuilder().setName("title").setAtom(title))
+						    .addField(Field.newBuilder().setName("date").setDate(date))
+						    .addField(Field.newBuilder().setName("source").setAtom(source))
+						    .addField(Field.newBuilder().setName("description").setAtom(description))
+						    .addField(Field.newBuilder().setName("body").setText(body))
+						    .build();
+					
+				} catch (Exception e1) {
+					//getWriter.write("aha! " + e1.getMessage() + "\n");
+				}
 			    
 				try {
 					getIndex().put(doc);
@@ -119,23 +160,7 @@ public class UCDMoodNoozServlet extends HttpServlet {
 							.getOperationResult().getCode())) {
 						e.printStackTrace();
 					}
-				}
-				
-//				Entity entity = null;
-//				try {
-//					Key key = KeyFactory.createKey("webdoc", link);
-//					entity = datastore.get(key);
-//				} catch(EntityNotFoundException e) {
-//					entity = new Entity("webdoc", link);
-//				    
-//					entity.setProperty(COL_LINK, link);
-//					entity.setProperty(COL_TITLE, title);
-//					entity.setProperty(COL_SOURCE, source);
-//					entity.setProperty(COL_DATE, date);
-//					entity.setProperty(COL_DESCRIPTION, description);
-//					
-//					datastore.put(entity);
-//				}
+				}				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -157,6 +182,9 @@ public class UCDMoodNoozServlet extends HttpServlet {
 		String queryString = req.getParameter(PARAM_STRING);
 		String period = req.getParameter(PARAM_PERIOD);
 		
+		String url = req.getParameter(PARAM_URL);
+		String simpSource = req.getParameter(PARAM_SOURCE);
+		
 //		debug :
 //		writer.write("Received request: " + req.toString());
 //		@SuppressWarnings("unchecked")
@@ -166,6 +194,19 @@ public class UCDMoodNoozServlet extends HttpServlet {
 //	    }
 //		writer.write("Received query string: " + queryString + " and period: " + period);
 		
+		
+		if (url != null && simpSource != null) {
+			// writer.write("Received query link: " + url + " and source: " + simpSource);
+			try {
+				resp.setCharacterEncoding("UTF-8");
+				resp.setContentType("text/plain");
+				writer.write(BodyTextFetcher.getBodyText(url, simpSource));
+			} catch (Exception e) {
+				writer.write(e.getMessage());
+			}
+			return;
+		}
+	
 		if(queryString == null) return;
 		queryString = queryString.toLowerCase();
 				
@@ -296,6 +337,5 @@ public class UCDMoodNoozServlet extends HttpServlet {
 		} catch (RuntimeException e) {
 		    
 		}
-
 	}
 }

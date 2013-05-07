@@ -15,87 +15,90 @@ import java.util.regex.Pattern;
  */
 public class BodyTextFetcher {
 	
-	public static String getBodyText(String url, String source) {
+	public static String getBodyText(String link, String source) {
+		String body = null;
+		
 		try {
-			String rawText = getRawText(url);
+			String rawText = getRawText(link);
 			rawText = rawText.replace("\r", "");
 			rawText = rawText.replace("\n", "");
-			String rawBody = null;
 			
 			Pattern bodyPattern;
 			Matcher bodyMatcher;
+			StringBuilder builder = new StringBuilder();
 			
-			// Irish Times:
-			bodyPattern = Pattern.compile("<p\\s*class\\s*=\\s*\"headline-info\"\\s*.+\\s*<\\/p>.+<ul[^>]+>");
-			bodyMatcher = bodyPattern.matcher(rawText);
-			if(bodyMatcher.find()) {
-				rawBody = bodyMatcher.group();
-				// rawBody is in a form of <p class="headline-info">...</p><p>real_body</p><ul...>
+			if(source.equals("a")) {
+				// <p CLASS="no_name"> body </p> </section>
 				
-				if(rawBody != null) {
+				bodyPattern = Pattern.compile("<p\\s*[Cc][Ll][Aa][Ss][Ss]\\s*=\\s*\"no_name\"\\s*>.+<\\/p>\\s*(<[^<]+>\\s*)*<\\/section>");
+				bodyMatcher = bodyPattern.matcher(rawText);
+				if(bodyMatcher.find()) {
+					body = bodyMatcher.group();
 					
-					// remove headline info
-					Pattern tempPattern = Pattern.compile("<p>.+");
-					Matcher tempMatcher = tempPattern.matcher(rawBody);
-					if(tempMatcher.find()) {
-						rawBody = tempMatcher.group();
-						// rawBody now is in a form of <p>real_body</p><ul...>
+					// remove image description
+					body = body.replaceAll("<li\\s*[^>]*\\s>\\s*<img.+\\s*<\\s*/\\s*li\\s*>", "");	
+					// remove javascript
+					body = body.replaceAll("<script\\s*.+</script>", "");				
+					// remove everything that is in <p class = "some_other_names"> </p>
+					body = body.replaceAll("<p\\s*[Cc][Ll][Aa][Ss][Ss]\\s*=\\s*\"[^Nn]*\"\\s*>\\s*[^<>]+\\s*<\\/p>", "");
+					
+				}
+			} else if(source.equals("b")) {
+				// Guardian
+				bodyPattern = Pattern.compile("<div\\s*id=\\s*\\\"article-body-blocks\\\">\\s*.+\\s*<\\/div>");
+				bodyMatcher = bodyPattern.matcher(rawText);
+				if(bodyMatcher.find()) {
+					body = bodyMatcher.group();
+					// rawBody is in a form of <div id="article-body-blocks">...<p>real_body</p>...</div>
+				}
+				
+				
+				bodyPattern = Pattern.compile("(<p>\\s*.+\\s*<\\/p>){3,}\\s*.+\\s*<\\/div>");
+				bodyMatcher = bodyPattern.matcher(body);
+				if(bodyMatcher.find()) {
+					body = bodyMatcher.group();
+					// rawBody is in a form of <p>...</p><p>...</p><p>...</p> ... <p>...</p>
+				}
+				
+				int firstIndex = body.indexOf("</div>");
+				body = body.substring(0, firstIndex);
+				
+			} else if(source.equals("c")) {
+				bodyPattern = Pattern.compile("<p\\s*class=\"introduction\"[^>]*>.+<!--\\s*.*\\s*story-body\\s*-->");
+				bodyMatcher = bodyPattern.matcher(rawText);
+				if(bodyMatcher.find()) {
+					body = bodyMatcher.group();
+					bodyPattern = Pattern.compile("<p>[^<]+</p>");
+					bodyMatcher = bodyPattern.matcher(body);
+					
+					while(bodyMatcher.find()) {
+						builder = builder.append(bodyMatcher.group());
 					}
 				}
-			} else {
-				
-				if(isIrishTimes(source)) {
-					bodyPattern = Pattern.compile("<p>\\s*.+\\s*<\\/p>.*<ul[^>]+>"); //old
-					bodyMatcher = bodyPattern.matcher(rawText);
-					if(bodyMatcher.find()) {
-						rawBody = bodyMatcher.group();
-						// rawBody is in a form of <p>...</p><p>real_body</p><ul...>
-					} else {
-						bodyPattern = Pattern.compile("<section>\\s*<p[^>]*>\\s*.+\\s*<\\/p>\\s*<\\/section>"); //new
-						bodyMatcher = bodyPattern.matcher(rawText);
-						if(bodyMatcher.find()) {
-							rawBody = bodyMatcher.group();
-							// rawBody is in a form of <section><p (class = balbla)>real_body</p></section>
-						}
-					}
-				} else {
-					// Guardian
-					bodyPattern = Pattern.compile("<div\\s*id=\\s*\\\"article-body-blocks\\\">\\s*.+\\s*<\\/div>");
-					bodyMatcher = bodyPattern.matcher(rawText);
-					if(bodyMatcher.find()) {
-						rawBody = bodyMatcher.group();
-						// rawBody is in a form of <div id="article-body-blocks"><p>real_body</p></div>
-					}
-					
-					bodyPattern = Pattern.compile("(<p>\\s*.+\\s*<\\/p>){3,}");
-					bodyMatcher = bodyPattern.matcher(rawText);
-					if(bodyMatcher.find()) {
-						rawBody = bodyMatcher.group();
-						// rawBody is in a form of <p>...</p><p>...</p><p>...</p> ... <p>...</p>
-					}
-				}
+				body = builder.toString();
 			}
-
-			if(rawBody != null) {
+			
+			if(body != null) {
+								
 				// removes html tags
-				rawBody = rawBody.replaceAll("</p>", "\n");
-				rawBody = rawBody.replaceAll("<\\s*\\/{0,1}[^>]*>", "");
-				rawBody = rawBody.replaceAll("&nbsp;", " ");
+				body = body.replaceAll("</p>\\s*", "\n")
+						.replaceAll("<BR/>\\s*", "\n")
+						.replaceAll("<br/>\\s*", "\n")
+						.replaceAll("<\\s*\\/{0,1}[^>]*>", "")
+						.replaceAll("&nbsp;", " ")
+						.replaceAll("&quot;", "\"")
+						.replaceAll("\n\\s+", "\n") // remove consecutive spaces after a newline																			
+						.replaceAll("\\s{3,}", " "); // remove consecutive spaces
 				
 				// decode string (Irish Times needs it)
-				rawBody = NumericCharacterReference.decode(rawBody, '?');
-				
-				return rawBody.trim();
-			}		
+				body = NumericCharacterReference.decode(body, '?');
+			}
+
+			return body.trim();
 			
-		} catch (IOException e) {}
-		
-		return null;
-	}
+		} catch(Exception e) {}
 	
-	
-	private static boolean isIrishTimes(String source) {
-		return source.equals(UCDMoodNoozServlet.SOURCE_THE_IRISH_TIME);
+		return body;
 	}
 
 
